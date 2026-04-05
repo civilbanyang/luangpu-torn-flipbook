@@ -7,13 +7,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         body { margin:0; background:linear-gradient(#5c4033, #d4b88a); display:flex; justify-content:center; align-items:center; min-height:100vh; overflow:hidden; }
-        .book { width:1150px; height:720px; perspective:3500px; box-shadow:0 50px 100px rgba(0,0,0,0.6); border-radius:25px; }
+        .book { width:1150px; height:720px; perspective:3500px; box-shadow:0 50px 100px rgba(0,0,0,0.6); border-radius:25px; position:relative; }
         .scene { width:100%; height:100%; transform-style:preserve-3d; transition:transform 0.75s cubic-bezier(0.7,0,0.3,1); }
         .page { position:absolute; width:50%; height:100%; background:#fffef7; box-shadow:15px 0 45px rgba(0,0,0,0.4); overflow:hidden; border:3px solid #5c4033; }
         .left { left:0; border-radius:25px 0 0 25px; transform-origin:right center; }
         .right { right:0; border-radius:0 25px 25px 0; transform-origin:left center; }
-        .cover { background:linear-gradient(135deg, #8B4513, #c47c4d); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; font-weight:bold; text-shadow:0 4px 12px rgba(0,0,0,0.6); }
-        iframe { width:100%; height:100%; border:none; }
+        .cover { background:linear-gradient(135deg, #8B4513, #c47c4d); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; text-shadow:0 4px 12px rgba(0,0,0,0.6); font-weight:bold; }
+        canvas { width:100%; height:100%; border:none; }
         .controls { position:absolute; bottom:-85px; left:50%; transform:translateX(-50%); display:flex; gap:25px; z-index:100; }
         button { padding:16px 42px; font-size:19px; background:#5c4033; color:white; border:none; border-radius:12px; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.3); }
         button:hover { background:#8B4513; }
@@ -32,11 +32,10 @@
             <p style="margin-top:80px;font-size:22px;">บ้านเมืองเก่า ต.บ้านยาง<br>อ.เกษตรสมบูรณ์ จ.ชัยภูมิ</p>
         </div>
 
-        <!-- เนื้อหา PDF ซ้าย -->
-        <div class="page left" id="leftPage"></div>
-
-        <!-- เนื้อหา PDF ขวา -->
-        <div class="page right" id="rightPage"></div>
+        <!-- หน้า PDF ซ้าย -->
+        <div class="page left" id="leftPage"><canvas id="canvasLeft"></canvas></div>
+        <!-- หน้า PDF ขวา -->
+        <div class="page right" id="rightPage"><canvas id="canvasRight"></canvas></div>
 
         <!-- ปกหลัง -->
         <div class="page right cover" id="coverBack">
@@ -64,9 +63,24 @@
         renderPages(1);
     });
 
-    function renderPages(num) {
-        document.getElementById('leftPage').innerHTML = `<iframe src="${pdfUrl}#page=${num}"></iframe>`;
-        document.getElementById('rightPage').innerHTML = `<iframe src="${pdfUrl}#page=${num+1}"></iframe>`;
+    async function renderPages(num) {
+        const canvasLeft = document.getElementById('canvasLeft');
+        const canvasRight = document.getElementById('canvasRight');
+
+        const page1 = await pdfDoc.getPage(num);
+        const page2 = await pdfDoc.getPage(num + 1);
+
+        const scale = 1.8;
+        const viewport1 = page1.getViewport({ scale });
+        const viewport2 = page2.getViewport({ scale });
+
+        canvasLeft.height = viewport1.height;
+        canvasLeft.width = viewport1.width;
+        canvasRight.height = viewport2.height;
+        canvasRight.width = viewport2.width;
+
+        await page1.render({ canvasContext: canvasLeft.getContext('2d'), viewport: viewport1 }).promise;
+        await page2.render({ canvasContext: canvasRight.getContext('2d'), viewport: viewport2 }).promise;
     }
 
     function nextPage() {
@@ -74,7 +88,7 @@
             currentPage += 2;
             renderPages(currentPage);
             document.getElementById('scene').style.transform = 'rotateY(-18deg)';
-            setTimeout(() => document.getElementById('scene').style.transform = 'rotateY(0deg)', 650);
+            setTimeout(() => { document.getElementById('scene').style.transform = 'rotateY(0deg)'; }, 650);
         }
     }
 
