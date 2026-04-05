@@ -4,1015 +4,565 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>การจัดงานนมัสการหลวงปู่ต้อน</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=Charm:wght@400;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=Charm:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
-:root {
-  --gold: #d4a843;
-  --gold-light: #f0d080;
-  --gold-deep: #a07820;
-  --crimson: #8b1a1a;
-  --maroon: #5c1a1a;
-  --cream: #fdf6e3;
-  --shadow-ink: #1a0a00;
-  --ink: #2a1800;
-}
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  background: #0e0604;
-  min-height: 100vh;
+html, body {
+  height: 100%;
+  background: #1c1008;
+  font-family: 'Sarabun', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: 'Sarabun', sans-serif;
   overflow: hidden;
-  position: relative;
+  user-select: none;
 }
 
-/* ═══ PARTICLE CANVAS ═══ */
-#particles { position:fixed; inset:0; pointer-events:none; z-index:0; }
-
-/* ═══ BACKGROUND LAYERS ═══ */
-.bg-radial {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(180,100,20,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 120% 80% at 50% 100%, rgba(100,30,10,0.35) 0%, transparent 60%);
+    radial-gradient(ellipse 70% 55% at 50% 35%, rgba(160,90,15,0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 60% at 50% 110%, rgba(80,20,5,0.4) 0%, transparent 60%);
 }
 
-/* ═══ ORNAMENT HEADER ═══ */
+/* ── HEADER ── */
 .header {
   position: relative; z-index: 10;
-  text-align: center;
-  margin-bottom: 28px;
-  animation: fadeDown 1.2s ease both;
+  text-align: center; margin-bottom: 18px;
+  opacity: 0; animation: fadeIn 1s 0.4s ease forwards;
 }
-.header-title {
-  font-family: 'Charm', cursive;
-  font-size: 17px;
-  color: var(--gold-light);
-  letter-spacing: 0.25em;
-  text-shadow: 0 0 30px rgba(212,168,67,0.6);
-  opacity: 0.85;
+.header h1 {
+  font-family: 'Charm', cursive; font-size: 18px; font-weight: 400;
+  color: #e8c870; letter-spacing: 0.2em;
+  text-shadow: 0 0 20px rgba(220,180,80,0.45);
 }
-.header-ornament {
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  margin: 4px 0;
-}
-.ornament-line {
-  width: 80px; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-.ornament-diamond {
-  width: 6px; height: 6px; background: var(--gold);
-  transform: rotate(45deg);
-  box-shadow: 0 0 10px var(--gold);
-}
+.header-rule { display:flex; align-items:center; gap:10px; margin-top:6px; justify-content:center; }
+.header-rule span { width:60px; height:1px; background:linear-gradient(90deg,transparent,#b89040,transparent); }
+.header-rule i { width:5px; height:5px; background:#c8a050; transform:rotate(45deg); display:block; }
 
-/* ═══ BOOK STAGE ═══ */
-.stage {
-  position: relative; z-index: 10;
-  perspective: 4500px;
-  perspective-origin: 50% 48%;
-}
+/* ── STAGE / BOOK ── */
+.stage { position:relative; z-index:10; perspective:3000px; }
 
-/* ═══ BOOK CONTAINER ═══ */
 .book {
-  width: 1080px;
-  height: 680px;
   position: relative;
+  width: 1040px; height: 660px;
   transform-style: preserve-3d;
-  transform: rotateX(4deg);
-  transition: transform 0.4s ease;
-  filter: drop-shadow(0 60px 80px rgba(0,0,0,0.9));
+  transform: rotateX(3deg);
+  transition: transform 0.6s ease;
+  filter: drop-shadow(0 40px 60px rgba(0,0,0,0.85));
 }
 
-/* ═══ BOOK SPINE GLOW ═══ */
-.spine-glow {
-  position: absolute;
-  left: 50%; top: 0; bottom: 0;
-  width: 6px;
-  transform: translateX(-50%);
-  background: linear-gradient(180deg, transparent 5%, var(--gold-deep) 30%, var(--gold) 50%, var(--gold-deep) 70%, transparent 95%);
-  z-index: 50;
-  box-shadow: 0 0 20px rgba(212,168,67,0.8), 0 0 60px rgba(212,168,67,0.3);
-  border-radius: 3px;
-  pointer-events: none;
-}
-.spine-glow::before, .spine-glow::after {
-  content: ''; position: absolute;
-  left: 50%; transform: translateX(-50%);
-  width: 2px; height: 30px;
-  background: var(--gold-light);
-  border-radius: 1px;
-}
-.spine-glow::before { top: 8%; }
-.spine-glow::after { bottom: 8%; }
-
-/* ═══ PAGE SPREAD ═══ */
-.page-spread {
-  position: absolute; inset: 0;
-  display: flex;
-  border-radius: 4px 20px 20px 4px;
-  overflow: hidden;
+/* centre spine */
+.book::after {
+  content: ''; position:absolute; left:50%; top:4%; bottom:4%;
+  width:2px; transform:translateX(-50%);
+  background:linear-gradient(180deg,transparent,#c8a050 20%,#f0d080 50%,#c8a050 80%,transparent);
+  box-shadow:0 0 12px rgba(200,160,60,0.6);
+  z-index:60; pointer-events:none; border-radius:1px;
 }
 
-/* ═══ PAGES ═══ */
-.page {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  background: var(--cream);
+/* ── SPREADS ── */
+.spread {
+  position:absolute; inset:0;
+  display:none;
+  border-radius:6px 14px 14px 6px;
 }
-.page-left {
-  border-right: 1px solid rgba(180,130,40,0.3);
-  border-radius: 20px 0 0 20px;
-  box-shadow: inset -8px 0 20px rgba(0,0,0,0.15);
+.spread.active { display:flex; }
+
+/* ── HALF PAGES ── */
+.half {
+  flex:1; position:relative; overflow:hidden;
+  background:#fdf8ef;
 }
-.page-right {
-  border-left: 1px solid rgba(180,130,40,0.2);
-  border-radius: 0 20px 20px 0;
-  box-shadow: inset 8px 0 20px rgba(0,0,0,0.1);
+.half-left  { border-radius:6px 0 0 6px; box-shadow:inset -5px 0 16px rgba(0,0,0,0.10); }
+.half-right { border-radius:0 14px 14px 0; box-shadow:inset 5px 0 16px rgba(0,0,0,0.07); }
+
+/* gentle page shadow gradient */
+.half-left::after {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:2;
+  background:linear-gradient(90deg,rgba(0,0,0,0.04) 0%,transparent 20%);
+}
+.half-right::after {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:2;
+  background:linear-gradient(270deg,rgba(0,0,0,0.04) 0%,transparent 20%);
 }
 
-/* page texture */
-.page::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 1; opacity: 0.5;
-}
+/* ── CANVAS WRAPPER ── */
+.cw { width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; z-index:3; }
+.cw canvas { max-width:100%; max-height:100%; display:block; }
 
-/* ═══ COVER PAGES ═══ */
-.cover-page {
-  background: linear-gradient(160deg, #3a0a00 0%, #6b1a06 35%, #8b2a0a 60%, #5a1000 100%);
-  position: relative; overflow: hidden;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center; padding: 30px;
-  color: var(--cream);
+/* ── PAGE NUMBER ── */
+.pn {
+  position:absolute; bottom:13px; font-size:11px;
+  color:rgba(130,95,25,0.6); letter-spacing:0.08em; z-index:5;
 }
+.pn-l { left:20px; } .pn-r { right:20px; }
 
-.cover-page::before {
-  content: ''; position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 30%, rgba(212,168,67,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 90% 70% at 50% 90%, rgba(0,0,0,0.4) 0%, transparent 60%);
-  pointer-events: none;
+/* ── COVER ── */
+.cover-half {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; padding:30px 26px; color:#fdf0d0;
+  background:linear-gradient(150deg,#3d0c03 0%,#6e1c08 40%,#8c2a10 70%,#4a0e04 100%);
+  position:relative; overflow:hidden;
 }
+.cover-half::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 35%,rgba(200,140,40,0.09) 0%,transparent 70%);
+}
+.cover-half::after {
+  content:''; position:absolute; inset:16px;
+  border:1px solid rgba(200,155,50,0.28); border-radius:6px; pointer-events:none;
+}
+.cv-lotus { font-size:50px; margin-bottom:14px; line-height:1; position:relative; }
+.cv-label { font-family:'Charm',cursive; font-size:11px; letter-spacing:0.28em; color:rgba(230,195,100,0.6); margin-bottom:9px; position:relative; }
+.cv-title { font-family:'Charm',cursive; font-size:26px; font-weight:700; line-height:1.35; color:#fdf0d0; text-shadow:0 2px 14px rgba(200,140,40,0.35); position:relative; }
+.cv-name  { font-family:'Charm',cursive; font-size:38px; font-weight:700; color:#f0d07a; text-shadow:0 0 28px rgba(220,180,60,0.65),0 3px 10px rgba(0,0,0,0.5); margin:6px 0; position:relative; }
+.cv-rule  { width:55%; height:1px; margin:13px auto; background:linear-gradient(90deg,transparent,#c8a040,transparent); position:relative; }
+.cv-sub   { font-size:13px; color:rgba(255,240,200,0.58); line-height:1.8; position:relative; }
+.cv-loc   { font-size:11px; color:rgba(255,240,200,0.38); letter-spacing:0.07em; margin-top:13px; position:relative; }
 
-/* ornamental border on cover */
-.cover-border {
-  position: absolute; inset: 14px;
-  border: 1px solid rgba(212,168,67,0.35);
-  border-radius: 12px;
-  pointer-events: none;
-}
-.cover-border::before {
-  content: ''; position: absolute; inset: 6px;
-  border: 1px solid rgba(212,168,67,0.18);
-  border-radius: 8px;
-}
+.back-cover { background:linear-gradient(160deg,#150300 0%,#2c0a05 60%,#1a0400 100%); }
+.back-seal  { font-size:50px; margin-bottom:14px; position:relative; }
 
-/* corner ornaments */
-.cover-corner {
-  position: absolute;
-  width: 40px; height: 40px;
-  border-color: var(--gold-deep);
-  border-style: solid;
-  opacity: 0.7;
-}
-.cover-corner.tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; }
-.cover-corner.tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
-.cover-corner.bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; }
-.cover-corner.br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
-
-.cover-emblem {
-  width: 90px; height: 90px;
-  margin-bottom: 20px;
-  position: relative;
-}
-.emblem-ring {
-  position: absolute; inset: 0;
-  border: 2px solid var(--gold-deep);
-  border-radius: 50%;
-  animation: rotateSlow 12s linear infinite;
-}
-.emblem-ring::before, .emblem-ring::after {
-  content: ''; position: absolute;
-  top: 50%; left: -8px;
-  width: 8px; height: 2px;
-  background: var(--gold-deep);
-}
-.emblem-ring::after { left: auto; right: -8px; }
-.emblem-inner {
-  position: absolute; inset: 12px;
-  border: 1px solid rgba(212,168,67,0.5);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 36px;
-}
-
-.cover-subtitle {
-  font-family: 'Charm', cursive;
-  font-size: 11px; letter-spacing: 0.3em;
-  color: var(--gold-light); opacity: 0.7;
-  margin-bottom: 10px; text-transform: uppercase;
-}
-.cover-title-main {
-  font-family: 'Charm', cursive;
-  font-size: 32px; font-weight: 700;
-  color: var(--cream);
-  line-height: 1.25;
-  text-shadow: 0 2px 20px rgba(212,168,67,0.4);
-  margin-bottom: 4px;
-}
-.cover-title-name {
-  font-family: 'Charm', cursive;
-  font-size: 42px; font-weight: 700;
-  color: var(--gold-light);
-  text-shadow: 0 0 40px rgba(212,168,67,0.8), 0 4px 15px rgba(0,0,0,0.5);
-  margin-bottom: 6px;
-}
-.cover-sub {
-  font-size: 13px; color: rgba(253,246,227,0.65);
-  letter-spacing: 0.05em; line-height: 1.7;
-}
-.cover-divider {
-  width: 60%; height: 1px; margin: 16px auto;
-  background: linear-gradient(90deg, transparent, var(--gold-deep), var(--gold), var(--gold-deep), transparent);
-}
-.cover-location {
-  font-size: 12px; color: rgba(253,246,227,0.55);
-  letter-spacing: 0.12em; margin-top: 4px;
-}
-
-/* back cover */
-.back-cover {
-  background: linear-gradient(200deg, #1a0400 0%, #3a0c05 50%, #2a0800 100%);
-}
-.back-seal {
-  width: 100px; height: 100px;
-  border: 2px solid rgba(212,168,67,0.4);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 48px; margin: 0 auto 20px;
-  background: radial-gradient(circle, rgba(212,168,67,0.08), transparent);
-  box-shadow: 0 0 30px rgba(212,168,67,0.15);
-}
-
-/* ═══ CANVAS / PDF ═══ */
-.pdf-canvas-wrap {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--cream);
-}
-.pdf-canvas-wrap canvas {
-  max-width: 100%; max-height: 100%;
-  display: block;
-}
-
-/* ═══ PAGE NUMBER ═══ */
-.pg-num {
-  position: absolute; bottom: 18px; left: 0; right: 0;
-  text-align: center;
-  font-family: 'Cinzel Decorative', cursive;
-  font-size: 11px; color: rgba(160,120,32,0.7);
-  z-index: 10;
-  letter-spacing: 0.15em;
-}
-.pg-num-left { left: 30px; right: auto; }
-.pg-num-right { right: 30px; left: auto; }
-
-/* ═══ FLIP ANIMATION ═══ */
-.flip-left-layer, .flip-right-layer {
-  position: absolute; top: 0; bottom: 0;
-  width: 50%;
-  transform-style: preserve-3d;
-  pointer-events: none;
-  z-index: 20;
-}
-.flip-left-layer { right: 0; transform-origin: left center; }
-.flip-right-layer { left: 0; transform-origin: right center; }
-
-.flip-face {
-  position: absolute; inset: 0;
-  backface-visibility: hidden;
-  background: var(--cream);
-  overflow: hidden;
-}
-.flip-face.back {
-  transform: rotateY(180deg);
-}
-
-/* ═══ SHADOW OVERLAY ═══ */
-.page-shadow-overlay {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 5;
-  background: linear-gradient(90deg, rgba(0,0,0,0.12) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.08) 100%);
-}
-
-/* ═══ CONTROLS ═══ */
-.controls {
-  position: relative; z-index: 10;
-  display: flex; align-items: center; gap: 20px;
-  margin-top: 28px;
-  animation: fadeUp 1.2s 0.3s ease both;
-}
-
-.btn {
-  padding: 12px 32px;
-  font-family: 'Sarabun', sans-serif;
-  font-size: 15px; font-weight: 700;
-  color: var(--cream);
-  background: linear-gradient(145deg, rgba(90,28,0,0.9), rgba(60,15,0,0.95));
-  border: 1px solid rgba(212,168,67,0.45);
-  border-radius: 40px;
-  cursor: pointer;
-  letter-spacing: 0.08em;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
-}
-.btn::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(145deg, rgba(212,168,67,0.15), transparent);
-  opacity: 0; transition: opacity 0.3s;
-}
-.btn:hover::before { opacity: 1; }
-.btn:hover {
-  border-color: var(--gold);
-  box-shadow: 0 6px 30px rgba(0,0,0,0.6), 0 0 20px rgba(212,168,67,0.2);
-  transform: translateY(-2px);
-}
-.btn:active { transform: translateY(0); }
-.btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-
-.page-counter {
-  font-family: 'Cinzel Decorative', cursive;
-  font-size: 12px;
-  color: rgba(212,168,67,0.65);
-  letter-spacing: 0.15em;
-  min-width: 90px; text-align: center;
-}
-
-/* ═══ PROGRESS BAR ═══ */
-.progress-wrap {
-  position: relative; z-index: 10;
-  width: 360px;
-  margin-top: 16px;
-  animation: fadeUp 1.2s 0.5s ease both;
-}
-.progress-track {
-  height: 2px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold-light));
-  border-radius: 2px;
-  transition: width 0.5s ease;
-  box-shadow: 0 0 8px rgba(212,168,67,0.5);
-}
-
-/* ═══ LOADING ═══ */
-.loading-screen {
-  position: fixed; inset: 0;
-  background: #0e0604;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.8s ease;
-}
-.loading-screen.hidden { opacity: 0; pointer-events: none; }
-.loading-lotus { font-size: 64px; animation: pulse 2s ease-in-out infinite; }
-.loading-text {
-  font-family: 'Charm', cursive;
-  font-size: 18px; color: var(--gold-light);
-  margin-top: 16px; letter-spacing: 0.2em;
-}
-.loading-bar-wrap {
-  width: 220px; height: 2px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px; margin-top: 20px;
-  overflow: hidden;
-}
-.loading-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold));
-  border-radius: 2px;
-  animation: loadProgress 3s ease-out forwards;
-  box-shadow: 0 0 10px var(--gold);
-}
-
-/* ═══ TOOLTIP HINT ═══ */
-.hint {
-  position: relative; z-index: 10;
-  font-size: 11px; color: rgba(212,168,67,0.35);
-  margin-top: 10px; letter-spacing: 0.1em;
-  animation: fadeUp 1.2s 0.8s ease both;
-}
-
-/* ═══ KEYBOARD HINT ═══ */
-.key-hint {
-  display: inline-block;
-  padding: 1px 6px;
-  border: 1px solid rgba(212,168,67,0.25);
-  border-radius: 3px;
-  font-size: 10px;
-}
-
-/* ═══ GLARE ═══ */
-.page-glare {
-  position: absolute; inset: 0; z-index: 6;
-  pointer-events: none;
-  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.04) 100%);
-}
-
-/* ═══ ANIMATIONS ═══ */
-@keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:none; } }
-@keyframes fadeUp   { from { opacity:0; transform:translateY(16px);  } to { opacity:1; transform:none; } }
-@keyframes pulse    { 0%,100%{ transform:scale(1); opacity:0.8; } 50%{ transform:scale(1.1); opacity:1; } }
-@keyframes rotateSlow { to { transform:rotate(360deg); } }
-@keyframes loadProgress { from{width:0} to{width:100%} }
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
-}
-
-/* ═══ PAGE FLIP 3D ENGINE ═══ */
+/* ── FLIP LAYER ── */
 .flipper {
-  position: absolute; inset: 0;
-  z-index: 30; pointer-events: none;
-  perspective: 3000px;
-}
-.flipper-page {
-  position: absolute; top: 0; bottom: 0; width: 50%;
-  transform-style: preserve-3d;
-  will-change: transform;
-  border-radius: 0 20px 20px 0;
-}
-.flipper-page .fp-front,
-.flipper-page .fp-back {
-  position: absolute; inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  overflow: hidden;
-}
-.flipper-page .fp-back { transform: rotateY(180deg); }
-
-/* right page flips left */
-.flipper-page.from-right { right: 0; transform-origin: left center; transform: rotateY(0deg); }
-/* left page flips right */
-.flipper-page.from-left  { left: 0; transform-origin: right center; transform: rotateY(0deg); border-radius: 20px 0 0 20px; }
-
-/* Shadow that appears during flip */
-.flip-shadow {
-  position: absolute; top: 0; bottom: 0;
-  width: 100%;
-  pointer-events: none;
-  background: linear-gradient(90deg, rgba(0,0,0,0.3), transparent);
-  opacity: 0;
-  z-index: 4;
+  position:absolute; inset:0;
+  pointer-events:none; z-index:50;
+  perspective:2000px; display:none;
 }
 
-/* ═══ CURL EFFECT ═══ */
-.page-curl {
-  position: absolute; bottom: 0; right: 0;
-  width: 40px; height: 40px;
-  pointer-events: none; z-index: 15;
-  opacity: 0.5;
-  background: linear-gradient(225deg, #e8d5a0, #c4a855, transparent 50%);
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+/* The leaf: positioned over right or left half */
+.flip-leaf {
+  position:absolute; top:0; bottom:0; right:0; width:50%;
+  transform-style:preserve-3d;
+  transform-origin:left center;
+  will-change:transform;
+}
+.flip-leaf.is-prev {
+  right:auto; left:0;
+  transform-origin:right center;
 }
 
-/* ═══ RESPONSIVE ═══ */
-@media (max-width: 1100px) {
-  .book { width: 860px; height: 540px; }
+.fp-face {
+  position:absolute; inset:0;
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  overflow:hidden;
+  background:#fdf8ef;
 }
-@media (max-width: 900px) {
-  .book { width: 700px; height: 440px; }
-  .cover-title-main { font-size: 22px; }
-  .cover-title-name { font-size: 30px; }
+.fp-face.fp-back { transform:rotateY(180deg); }
+
+/* fold gradient painted during animation via JS */
+.fp-shade {
+  position:absolute; inset:0; z-index:5; pointer-events:none;
+  opacity:0;
 }
+
+/* ── CONTROLS ── */
+.controls {
+  position:relative; z-index:10;
+  display:flex; align-items:center; gap:14px; margin-top:20px;
+  opacity:0; animation:fadeIn 1s 0.6s ease forwards;
+}
+.btn {
+  padding:9px 26px; font-family:'Sarabun',sans-serif; font-size:14px; font-weight:600;
+  color:#f0dda0;
+  background:linear-gradient(145deg,rgba(65,20,4,0.96),rgba(40,10,2,0.98));
+  border:1px solid rgba(185,140,38,0.38); border-radius:28px; cursor:pointer;
+  transition:all 0.22s ease; letter-spacing:0.05em;
+  box-shadow:0 3px 14px rgba(0,0,0,0.4);
+}
+.btn:hover:not(:disabled) {
+  border-color:rgba(200,160,55,0.65);
+  box-shadow:0 4px 20px rgba(0,0,0,0.48),0 0 12px rgba(185,140,38,0.15);
+  transform:translateY(-1px);
+}
+.btn:active:not(:disabled) { transform:translateY(0); }
+.btn:disabled { opacity:0.22; cursor:default; }
+.page-info { font-size:12px; color:rgba(195,160,55,0.58); letter-spacing:0.1em; min-width:110px; text-align:center; }
+
+/* ── PROGRESS ── */
+.progress {
+  position:relative; z-index:10; width:300px; margin-top:12px;
+  opacity:0; animation:fadeIn 1s 0.8s ease forwards;
+}
+.pt { height:2px; background:rgba(255,255,255,0.07); border-radius:2px; }
+.pf { height:100%; background:linear-gradient(90deg,#9a6e1a,#deb840); border-radius:2px; transition:width 0.45s ease; box-shadow:0 0 6px rgba(195,155,45,0.35); }
+
+/* ── HINT ── */
+.hint {
+  position:relative; z-index:10; margin-top:9px;
+  font-size:11px; color:rgba(175,140,45,0.3); letter-spacing:0.07em;
+  opacity:0; animation:fadeIn 1s 1s ease forwards;
+}
+.kb { display:inline-block; padding:1px 5px; border:1px solid rgba(175,140,45,0.22); border-radius:3px; font-size:10px; }
+
+/* ── LOADER ── */
+.loader {
+  position:fixed; inset:0; z-index:9999; background:#1c1008;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:opacity 0.7s ease;
+}
+.loader.done { opacity:0; pointer-events:none; }
+.loader-icon { font-size:54px; animation:pulse 2s ease-in-out infinite; }
+.loader-text { font-family:'Charm',cursive; font-size:16px; color:#e0c060; margin-top:14px; letter-spacing:0.2em; }
+.loader-bar-wrap { width:180px; height:2px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:16px; overflow:hidden; }
+.loader-bar { height:100%; background:linear-gradient(90deg,#9a6e1a,#deb840); animation:loadA 2.5s ease-out forwards; }
+
+@keyframes fadeIn  { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:none} }
+@keyframes pulse   { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.07)} }
+@keyframes loadA   { from{width:0} to{width:100%} }
+
 </style>
 </head>
 <body>
 
-<!-- LOADING SCREEN -->
-<div class="loading-screen" id="loadingScreen">
-  <div class="loading-lotus">🪷</div>
-  <div class="loading-text">กำลังโหลด...</div>
-  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-icon">🪷</div>
+  <div class="loader-text">กำลังเปิดหนังสือ…</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
 </div>
-
-<!-- PARTICLES -->
-<canvas id="particles"></canvas>
-<div class="bg-radial"></div>
 
 <!-- HEADER -->
 <div class="header">
-  <div class="header-title">การจัดงานนมัสการ</div>
-  <div class="header-ornament">
-    <div class="ornament-line"></div>
-    <div class="ornament-diamond"></div>
-    <div class="ornament-line"></div>
-  </div>
+  <h1>การจัดงานนมัสการหลวงปู่ต้อน</h1>
+  <div class="header-rule"><span></span><i></i><span></span></div>
 </div>
 
-<!-- BOOK STAGE -->
+<!-- BOOK -->
 <div class="stage">
-  <div class="book" id="book">
+<div class="book" id="book">
 
-    <!-- SPINE GLOW -->
-    <div class="spine-glow"></div>
+  <!-- SPREAD: COVER -->
+  <div class="spread active" id="s-cover">
+    <div class="half half-left cover-half">
+      <div class="cv-lotus">🪷</div>
+      <div class="cv-label">สักการะบูชา</div>
+      <div class="cv-title">การจัดงานนมัสการ</div>
+      <div class="cv-name">หลวงปู่ต้อน</div>
+      <div class="cv-rule"></div>
+      <div class="cv-sub">(พระครูพิพัฒน์ศีลคุณ)</div>
+      <div class="cv-loc">บ้านเมืองเก่า · ต.บ้านยาง · อ.เกษตรสมบูรณ์ · จ.ชัยภูมิ</div>
+    </div>
+    <div class="half half-right">
+      <div class="cw"><canvas id="c-cr"></canvas></div>
+      <div class="pn pn-r">๑</div>
+    </div>
+  </div>
 
-    <!-- SPREAD 0: Cover -->
-    <div class="page-spread" id="spread-cover">
-      <!-- LEFT COVER -->
-      <div class="page page-left cover-page" id="coverLeft">
-        <div class="cover-border"></div>
-        <div class="cover-corner tl"></div>
-        <div class="cover-corner tr"></div>
-        <div class="cover-corner bl"></div>
-        <div class="cover-corner br"></div>
-        <div class="cover-emblem">
-          <div class="emblem-ring"></div>
-          <div class="emblem-inner">🪷</div>
-        </div>
-        <div class="cover-subtitle">สักการะบูชา</div>
-        <div class="cover-title-main">การจัดงานนมัสการ</div>
-        <div class="cover-title-name">หลวงปู่ต้อน</div>
-        <div class="cover-divider"></div>
-        <div class="cover-sub">(พระครูพิพัฒน์ศีลคุณ)</div>
-        <div class="cover-location">บ้านเมืองเก่า • ต.บ้านยาง • อ.เกษตรสมบูรณ์ • จ.ชัยภูมิ</div>
+  <!-- SPREAD: PDF -->
+  <div class="spread" id="s-pdf">
+    <div class="half half-left">
+      <div class="cw"><canvas id="c-l"></canvas></div>
+      <div class="pn pn-l" id="n-l"></div>
+    </div>
+    <div class="half half-right">
+      <div class="cw"><canvas id="c-r"></canvas></div>
+      <div class="pn pn-r" id="n-r"></div>
+    </div>
+  </div>
+
+  <!-- SPREAD: BACK COVER -->
+  <div class="spread" id="s-back">
+    <div class="half half-left">
+      <div class="cw"><canvas id="c-last"></canvas></div>
+      <div class="pn pn-l" id="n-last"></div>
+    </div>
+    <div class="half half-right cover-half back-cover">
+      <div class="back-seal">🙏</div>
+      <div class="cv-title" style="font-size:20px;">ขอบพระคุณทุกท่าน</div>
+      <div class="cv-rule"></div>
+      <div class="cv-sub">ที่ร่วมอนุรักษ์บุญบารมี<br>หลวงปู่ต้อน</div>
+      <div class="cv-loc" style="margin-top:16px;">บ้านเมืองเก่า · ชัยภูมิ</div>
+    </div>
+  </div>
+
+  <!-- FLIP LAYER -->
+  <div class="flipper" id="flipper">
+    <div class="flip-leaf" id="flip-leaf">
+      <div class="fp-face fp-front">
+        <div class="cw"><canvas id="fp-f"></canvas></div>
+        <div class="fp-shade" id="sh-f"></div>
       </div>
-      <!-- RIGHT: first PDF page preview -->
-      <div class="page page-right" id="coverRight">
-        <div class="pdf-canvas-wrap"><canvas id="c-cover-right"></canvas></div>
-        <div class="pg-num">หน้า ๑</div>
-        <div class="page-glare"></div>
-        <div class="page-curl"></div>
+      <div class="fp-face fp-back">
+        <div class="cw"><canvas id="fp-b"></canvas></div>
+        <div class="fp-shade" id="sh-b"></div>
       </div>
     </div>
+  </div>
 
-    <!-- SPREAD N: PDF pages (dynamically shown) -->
-    <div class="page-spread" id="spread-pdf" style="display:none;">
-      <div class="page page-left" id="pdfLeft">
-        <div class="pdf-canvas-wrap"><canvas id="c-left"></canvas></div>
-        <div class="pg-num pg-num-left" id="numLeft"></div>
-        <div class="page-shadow-overlay"></div>
-        <div class="page-glare" style="background:linear-gradient(225deg, rgba(255,255,255,0.04) 0%, transparent 40%);"></div>
-      </div>
-      <div class="page page-right" id="pdfRight">
-        <div class="pdf-canvas-wrap"><canvas id="c-right"></canvas></div>
-        <div class="pg-num pg-num-right" id="numRight"></div>
-        <div class="page-shadow-overlay" style="background:linear-gradient(270deg, rgba(0,0,0,0.10) 0%, transparent 15%);"></div>
-        <div class="page-glare"></div>
-        <div class="page-curl"></div>
-      </div>
-    </div>
-
-    <!-- SPREAD END: Back cover -->
-    <div class="page-spread" id="spread-back" style="display:none;">
-      <div class="page page-left" id="lastPdfPage">
-        <div class="pdf-canvas-wrap"><canvas id="c-last"></canvas></div>
-        <div class="pg-num" id="numLast"></div>
-        <div class="page-shadow-overlay"></div>
-      </div>
-      <div class="page page-right cover-page back-cover">
-        <div class="cover-border"></div>
-        <div class="cover-corner tl"></div>
-        <div class="cover-corner tr"></div>
-        <div class="cover-corner bl"></div>
-        <div class="cover-corner br"></div>
-        <div class="back-seal">🙏</div>
-        <div class="cover-title-main" style="font-size:22px;">ขอบพระคุณทุกท่าน</div>
-        <div class="cover-divider"></div>
-        <div class="cover-sub" style="opacity:0.8;line-height:2;">ที่ร่วมอนุรักษ์บุญบารมี<br>หลวงปู่ต้อน</div>
-        <div class="cover-location" style="margin-top:20px;">บ้านเมืองเก่า • ชัยภูมิ</div>
-      </div>
-    </div>
-
-    <!-- FLIPPER LAYER (animated pages) -->
-    <div class="flipper" id="flipper" style="display:none;">
-      <div class="flipper-page from-right" id="fpRight" style="transform-origin:left center;">
-        <div class="fp-front"><div class="pdf-canvas-wrap"><canvas id="fp-front-c"></canvas></div></div>
-        <div class="fp-back" ><div class="pdf-canvas-wrap"><canvas id="fp-back-c"></canvas></div></div>
-      </div>
-    </div>
-
-  </div><!-- /book -->
+</div><!-- /book -->
 </div><!-- /stage -->
 
 <!-- CONTROLS -->
 <div class="controls">
-  <button class="btn" id="btnPrev" onclick="prevPage()">◀ ก่อนหน้า</button>
-  <span class="page-counter" id="pageCounter">ปก</span>
-  <button class="btn" id="btnNext" onclick="nextPage()">ถัดไป ▶</button>
+  <button class="btn" id="btn-prev">◀ ก่อนหน้า</button>
+  <span class="page-info" id="page-info">ปกหน้า</span>
+  <button class="btn" id="btn-next">ถัดไป ▶</button>
 </div>
-
-<div class="progress-wrap">
-  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="progress">
+  <div class="pt"><div class="pf" id="prog" style="width:0%"></div></div>
 </div>
-
 <div class="hint">
-  <span class="key-hint">←</span> <span class="key-hint">→</span> แป้นลูกศร &nbsp;|&nbsp; ลากซ้าย-ขวา &nbsp;|&nbsp; คลิกขอบหนังสือ
+  <span class="kb">←</span> <span class="kb">→</span> &nbsp;แป้นลูกศร &nbsp;·&nbsp; ลากซ้าย-ขวา &nbsp;·&nbsp; คลิกขอบหนังสือ
 </div>
 
 <script>
-/* ══════════════════════════════════════════
-   PARTICLE SYSTEM
-══════════════════════════════════════════ */
-const pCanvas = document.getElementById('particles');
-const pCtx = pCanvas.getContext('2d');
-let particles = [];
+/* ══════ CONFIG ══════ */
+const PDF_URL = "https://raw.githubusercontent.com/civilbanyang/luangpu-torn-flipbook/main/การจัดงานนมัสการหลวงปู่ต้อน.pdf";
+const SCALE   = 2.2;
+const FLIP_MS = 520;
 
-function resizeParticles() {
-  pCanvas.width  = window.innerWidth;
-  pCanvas.height = window.innerHeight;
-}
-resizeParticles();
-window.addEventListener('resize', resizeParticles);
+/* ══════ STATE ══════ */
+let pdfDoc = null, totalPages = 0, totalSpreads = 0;
+let currentSpread = 0, flipping = false;
 
-class Particle {
-  constructor() { this.reset(true); }
-  reset(init) {
-    this.x = Math.random() * pCanvas.width;
-    this.y = init ? Math.random() * pCanvas.height : pCanvas.height + 10;
-    this.vx = (Math.random() - 0.5) * 0.4;
-    this.vy = -(Math.random() * 0.6 + 0.2);
-    this.size = Math.random() * 2.5 + 0.5;
-    this.alpha = Math.random() * 0.4 + 0.05;
-    this.decay = Math.random() * 0.002 + 0.001;
-    this.color = Math.random() > 0.5 ? `rgba(212,168,67,${this.alpha})` : `rgba(253,230,160,${this.alpha})`;
-  }
-  update() {
-    this.x += this.vx; this.y += this.vy;
-    this.alpha -= this.decay;
-    if (this.alpha <= 0 || this.y < -10) this.reset(false);
-  }
-  draw() {
-    pCtx.save();
-    pCtx.globalAlpha = Math.max(0, this.alpha);
-    pCtx.fillStyle = this.color;
-    pCtx.shadowBlur = 6; pCtx.shadowColor = 'rgba(212,168,67,0.4)';
-    pCtx.beginPath();
-    pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    pCtx.fill();
-    pCtx.restore();
-  }
+/* ══════ SPREAD MATH ══════
+  spread 0        : left=cover-art, right=p1
+  spread 1..N-2   : left=p(2k), right=p(2k+1)   [k = spread index]
+  spread last     : left=last-pdf-page (if unpaired), right=back-art
+
+  Pages per spread:
+    spread 0 uses p1
+    spreads 1..(N-2) use p2..p(lastPDF) in pairs
+    spread last uses last odd page if totalPages is even, nothing if odd... 
+    
+  Actually let's think simply:
+    p1 is on cover-right
+    p2..pN are in inner spreads as pairs (p2+p3, p4+p5, ...)
+    if (N-1) is odd there's a lone last page going to back-left
+    totalSpreads = 1 + ceil((N-1)/2) + 1
+══════ */
+function computeSpreads() {
+  const inner = Math.ceil((totalPages - 1) / 2); // pairs for p2..pN
+  return 1 + inner + 1;
 }
 
-for (let i = 0; i < 80; i++) particles.push(new Particle());
-
-function animParticles() {
-  pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animParticles);
+/* Returns {left: pageNum|null, right: pageNum|null} for a given spread */
+function pagesFor(s) {
+  if (s === 0)                   return { left: null, right: 1 };
+  if (s === totalSpreads - 1) {
+    // how many pages consumed by cover + inner spreads before this
+    const consumed = 1 + (s - 1) * 2; // p1 + 2*(s-1) pages in inner spreads
+    const lp = consumed + 1;
+    return { left: lp <= totalPages ? lp : null, right: null };
+  }
+  const lp = 1 + (s - 1) * 2 + 1; // p2 for s=1, p4 for s=2, ...
+  const rp = lp + 1;
+  return { left: lp, right: rp <= totalPages ? rp : null };
 }
-animParticles();
 
-/* ══════════════════════════════════════════
-   PDF ENGINE
-══════════════════════════════════════════ */
-const pdfUrl = "https://raw.githubusercontent.com/civilbanyang/luangpu-torn-flipbook/main/การจัดงานนมัสการหลวงปู่ต้อน.pdf";
-let pdfDoc = null;
-let totalPages = 0;
-
-// state: 'cover' | 'pdf' | 'back'
-let state = 'cover';
-// currentSpread: which pair of PDF pages (1-indexed left page)
-let currentLeft = 2; // pages 2-3 shown in spread-pdf
-
-const SCALE = 2.0;
-
-async function renderToCanvas(pageNum, canvas) {
-  if (!pdfDoc || pageNum < 1 || pageNum > totalPages) {
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+/* ══════ RENDER ══════ */
+async function drawPage(pn, canvas) {
+  if (!pn || pn < 1 || pn > totalPages) {
+    canvas.width = 2; canvas.height = 2;
+    canvas.getContext('2d').clearRect(0,0,2,2);
     return;
   }
-  const page = await pdfDoc.getPage(pageNum);
-  const vp = page.getViewport({ scale: SCALE });
+  const page = await pdfDoc.getPage(pn);
+  const vp   = page.getViewport({ scale: SCALE });
   canvas.width  = vp.width;
   canvas.height = vp.height;
   await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
 }
 
-async function initPDF() {
-  pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
-  totalPages = pdfDoc.numPages;
-  // pre-render cover right (page 1)
-  await renderToCanvas(1, document.getElementById('c-cover-right'));
-  // hide loading
-  document.getElementById('loadingScreen').classList.add('hidden');
-  updateCounter();
-}
+const TH = ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'];
+const toThai = n => String(n).replace(/[0-9]/g, d => TH[d]);
 
-/* ══════════════════════════════════════════
-   SPREAD MANAGEMENT
-══════════════════════════════════════════ */
-function showSpread(which) {
-  document.getElementById('spread-cover').style.display = which === 'cover' ? 'flex' : 'none';
-  document.getElementById('spread-pdf').style.display   = which === 'pdf'   ? 'flex' : 'none';
-  document.getElementById('spread-back').style.display  = which === 'back'  ? 'flex' : 'none';
-}
-
-async function renderPDFSpread(leftPage) {
-  await Promise.all([
-    renderToCanvas(leftPage,     document.getElementById('c-left')),
-    renderToCanvas(leftPage + 1, document.getElementById('c-right')),
-  ]);
-  document.getElementById('numLeft').textContent  = `หน้า ${leftPage}`;
-  document.getElementById('numRight').textContent = `หน้า ${leftPage + 1 <= totalPages ? leftPage + 1 : ''}`;
-}
-
-async function renderBackSpread() {
-  // last pdf page on left
-  const lastPage = totalPages % 2 === 0 ? totalPages - 1 : totalPages;
-  await renderToCanvas(lastPage, document.getElementById('c-last'));
-  document.getElementById('numLast').textContent = `หน้า ${lastPage}`;
-}
-
-/* ══════════════════════════════════════════
-   3D FLIP ANIMATION
-══════════════════════════════════════════ */
-let isFlipping = false;
-
-async function flipForward() {
-  if (isFlipping) return;
-  isFlipping = true;
-
-  const flipper   = document.getElementById('flipper');
-  const fpPage    = document.getElementById('fpRight');
-  const fpFrontC  = document.getElementById('fp-front-c');
-  const fpBackC   = document.getElementById('fp-back-c');
-
-  // determine what page the flipping leaf shows
-  let frontPageNum, backPageNum;
-
-  if (state === 'cover') {
-    frontPageNum = 1;  // right side of cover = page 1
-    backPageNum  = 2;  // first pdf left = page 2
+async function renderSpread(s) {
+  const p = pagesFor(s);
+  if (s === 0) {
+    await drawPage(1, document.getElementById('c-cr'));
+  } else if (s === totalSpreads - 1) {
+    await drawPage(p.left, document.getElementById('c-last'));
+    document.getElementById('n-last').textContent = p.left ? toThai(p.left) : '';
   } else {
-    frontPageNum = currentLeft + 1; // right of current spread
-    backPageNum  = currentLeft + 2; // next spread left
+    await Promise.all([
+      drawPage(p.left,  document.getElementById('c-l')),
+      drawPage(p.right, document.getElementById('c-r')),
+    ]);
+    document.getElementById('n-l').textContent = p.left  ? toThai(p.left)  : '';
+    document.getElementById('n-r').textContent = p.right ? toThai(p.right) : '';
   }
+}
+
+function showSpread(s) {
+  document.getElementById('s-cover').classList.toggle('active', s === 0);
+  document.getElementById('s-pdf'  ).classList.toggle('active', s > 0 && s < totalSpreads - 1);
+  document.getElementById('s-back' ).classList.toggle('active', s === totalSpreads - 1);
+}
+
+/* ══════ FLIP ══════ */
+async function flip(dir) {
+  if (flipping) return;
+  const next = currentSpread + (dir === 'next' ? 1 : -1);
+  if (next < 0 || next >= totalSpreads) return;
+  flipping = true;
+
+  const leaf = document.getElementById('flip-leaf');
+  const fpEl = document.getElementById('flipper');
+  const fpF  = document.getElementById('fp-f');
+  const fpB  = document.getElementById('fp-b');
+  const shF  = document.getElementById('sh-f');
+  const shB  = document.getElementById('sh-b');
+
+  const curP  = pagesFor(currentSpread);
+  const nextP = pagesFor(next);
+
+  /* What page goes on each face of the leaf:
+     NEXT: we flip the RIGHT page forward → front=cur.right, back=next.left
+     PREV: we flip the LEFT page backward → front=cur.left,  back=next.right  */
+  const frontPN = dir === 'next' ? curP.right   : curP.left;
+  const backPN  = dir === 'next' ? nextP.left   : nextP.right;
 
   await Promise.all([
-    renderToCanvas(frontPageNum, fpFrontC),
-    renderToCanvas(backPageNum,  fpBackC),
+    drawPage(frontPN, fpF),
+    drawPage(backPN,  fpB),
   ]);
 
-  // set flipper geometry: leaf is on RIGHT half
-  fpPage.style.left   = '';
-  fpPage.style.right  = '0';
-  fpPage.style.width  = '50%';
-  fpPage.style.transformOrigin = 'left center';
-  fpPage.style.transform = 'rotateY(0deg)';
-  fpPage.style.borderRadius = '0 20px 20px 0';
-  fpPage.querySelector('.fp-front').style.borderRadius = '0 20px 20px 0';
-  fpPage.querySelector('.fp-back').style.borderRadius  = '0 20px 20px 0';
-
-  flipper.style.display = 'block';
-
-  // PREPARE next state visually (hidden behind flipper)
-  if (state === 'cover') {
-    await renderPDFSpread(2);
-    showSpread('pdf');
-    document.getElementById('spread-pdf').style.visibility = 'hidden';
-  } else if (currentLeft + 2 <= totalPages - 1) {
-    await renderPDFSpread(currentLeft + 2);
-    document.getElementById('spread-pdf').style.visibility = 'hidden';
+  /* Position & orient the leaf */
+  if (dir === 'next') {
+    leaf.classList.remove('is-prev');
+    leaf.style.left = '50%'; leaf.style.right = '';
+    leaf.style.width = '50%';
+    leaf.style.transformOrigin = 'left center';
+    leaf.style.transform = 'rotateY(0deg)';
+    shF.style.background = 'linear-gradient(270deg,rgba(0,0,0,0.3) 0%,transparent 70%)';
+    shB.style.background = 'linear-gradient(90deg, rgba(0,0,0,0.2) 0%,transparent 70%)';
   } else {
-    await renderBackSpread();
-    showSpread('back');
-    document.getElementById('spread-back').style.visibility = 'hidden';
+    leaf.classList.add('is-prev');
+    leaf.style.left = '0'; leaf.style.right = '';
+    leaf.style.width = '50%';
+    leaf.style.transformOrigin = 'right center';
+    leaf.style.transform = 'rotateY(0deg)';
+    shF.style.background = 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%,transparent 70%)';
+    shB.style.background = 'linear-gradient(270deg,rgba(0,0,0,0.2) 0%,transparent 70%)';
   }
 
-  // ANIMATE
-  await animateFlip(fpPage, 0, -180, 600, 'easeInOut');
+  /* Render next spread onto static layers (hidden behind flipper) */
+  await renderSpread(next);
+  showSpread(next);
 
-  // POST: update state
-  flipper.style.display = 'none';
-  fpPage.style.transform = 'rotateY(0deg)';
+  /* Show flipper */
+  fpEl.style.display = 'block';
 
-  if (state === 'cover') {
-    state = 'pdf'; currentLeft = 2;
-    showSpread('pdf');
-  } else if (currentLeft + 2 <= totalPages - 1) {
-    currentLeft += 2;
-    showSpread('pdf');
-  } else {
-    state = 'back';
-    showSpread('back');
-  }
+  /* Animate */
+  const fromA = 0;
+  const toA   = dir === 'next' ? -180 : 180;
 
-  document.getElementById('spread-pdf').style.visibility  = '';
-  document.getElementById('spread-back').style.visibility = '';
-  isFlipping = false;
-  updateCounter();
-}
-
-async function flipBackward() {
-  if (isFlipping) return;
-  isFlipping = true;
-
-  const flipper  = document.getElementById('flipper');
-  const fpPage   = document.getElementById('fpRight');
-  const fpFrontC = document.getElementById('fp-front-c');
-  const fpBackC  = document.getElementById('fp-back-c');
-
-  let frontPageNum, backPageNum;
-
-  if (state === 'back') {
-    frontPageNum = totalPages % 2 === 0 ? totalPages - 1 : totalPages;
-    backPageNum  = currentLeft + 1;
-  } else if (state === 'pdf' && currentLeft === 2) {
-    frontPageNum = 2;
-    backPageNum  = 1;
-  } else {
-    frontPageNum = currentLeft;
-    backPageNum  = currentLeft - 1;
-  }
-
-  // The leaf comes from LEFT, so it starts at -180 and goes to 0
-  fpPage.style.left   = '0';
-  fpPage.style.right  = '';
-  fpPage.style.width  = '50%';
-  fpPage.style.transformOrigin = 'right center';
-  fpPage.style.transform = 'rotateY(-180deg)';
-  fpPage.style.borderRadius = '20px 0 0 20px';
-
-  await Promise.all([
-    renderToCanvas(frontPageNum, fpFrontC),
-    renderToCanvas(backPageNum,  fpBackC),
-  ]);
-
-  flipper.style.display = 'block';
-
-  // Prepare prev state visually
-  if (state === 'pdf' && currentLeft === 2) {
-    showSpread('cover');
-    document.getElementById('spread-cover').style.visibility = 'hidden';
-  } else if (state === 'back') {
-    await renderPDFSpread(currentLeft);
-    showSpread('pdf');
-    document.getElementById('spread-pdf').style.visibility = 'hidden';
-  } else {
-    await renderPDFSpread(currentLeft - 2);
-    document.getElementById('spread-pdf').style.visibility = 'hidden';
-  }
-
-  await animateFlip(fpPage, -180, 0, 600, 'easeInOut');
-
-  flipper.style.display = 'none';
-  fpPage.style.transform = 'rotateY(0deg)';
-
-  if (state === 'pdf' && currentLeft === 2) {
-    state = 'cover'; showSpread('cover');
-  } else if (state === 'back') {
-    state = 'pdf';
-    showSpread('pdf');
-  } else {
-    currentLeft -= 2;
-    showSpread('pdf');
-  }
-
-  document.getElementById('spread-cover').style.visibility = '';
-  document.getElementById('spread-pdf').style.visibility   = '';
-  isFlipping = false;
-  updateCounter();
-}
-
-function animateFlip(el, fromDeg, toDeg, duration, easing) {
-  return new Promise(resolve => {
-    const start = performance.now();
-    function ease(t) {
-      if (easing === 'easeInOut') return t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
-      return t;
-    }
+  await new Promise(res => {
+    const t0 = performance.now();
+    const ease = t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
     function frame(now) {
-      const t = Math.min((now - start) / duration, 1);
-      const angle = fromDeg + (toDeg - fromDeg) * ease(t);
-      el.style.transform = `rotateY(${angle}deg)`;
-      // shade
-      const progress = Math.abs(angle - fromDeg) / Math.abs(toDeg - fromDeg);
-      const shadowAlpha = Math.sin(progress * Math.PI) * 0.45;
-      el.style.filter = `brightness(${1 - shadowAlpha * 0.4})`;
-      if (t < 1) requestAnimationFrame(frame);
-      else { el.style.filter = ''; resolve(); }
+      const t  = Math.min((now - t0) / FLIP_MS, 1);
+      const et = ease(t);
+      const a  = fromA + (toA - fromA) * et;
+      leaf.style.transform = `rotateY(${a}deg)`;
+      /* shade peaks at 90° (t≈0.5) */
+      const sh = (Math.sin(t * Math.PI) * 0.55).toFixed(3);
+      shF.style.opacity = sh;
+      shB.style.opacity = (sh * 0.8).toFixed(3);
+      t < 1 ? requestAnimationFrame(frame) : res();
     }
     requestAnimationFrame(frame);
   });
+
+  fpEl.style.display = 'none';
+  shF.style.opacity = shB.style.opacity = 0;
+  leaf.style.transform = 'rotateY(0deg)';
+
+  currentSpread = next;
+  flipping = false;
+  updateUI();
 }
 
-/* ══════════════════════════════════════════
-   NAV
-══════════════════════════════════════════ */
-function canGoNext() {
-  if (!pdfDoc) return false;
-  if (state === 'back') return false;
-  if (state === 'cover') return true;
-  return currentLeft + 2 <= totalPages;
-}
-function canGoPrev() {
-  if (!pdfDoc) return false;
-  if (state === 'cover') return false;
-  return true;
-}
+/* ══════ UI ══════ */
+function updateUI() {
+  const p = pagesFor(currentSpread);
+  document.getElementById('btn-prev').disabled = currentSpread <= 0;
+  document.getElementById('btn-next').disabled = currentSpread >= totalSpreads - 1;
 
-function nextPage() { if (canGoNext()) flipForward(); }
-function prevPage() { if (canGoPrev()) flipBackward(); }
-
-function updateCounter() {
-  const btn1 = document.getElementById('btnPrev');
-  const btn2 = document.getElementById('btnNext');
-  const ctr  = document.getElementById('pageCounter');
-  const fill = document.getElementById('progressFill');
-
-  btn1.disabled = !canGoPrev();
-  btn2.disabled = !canGoNext();
-
-  if (state === 'cover') {
-    ctr.textContent = 'ปกหน้า';
-    fill.style.width = '0%';
-  } else if (state === 'back') {
-    ctr.textContent = 'ปกหลัง';
-    fill.style.width = '100%';
+  let label, pct;
+  if (currentSpread === 0) {
+    label = 'ปกหน้า'; pct = 0;
+  } else if (currentSpread === totalSpreads - 1) {
+    label = 'ปกหลัง'; pct = 100;
   } else {
-    ctr.textContent = `${currentLeft} – ${Math.min(currentLeft+1, totalPages)} / ${totalPages}`;
-    fill.style.width = (currentLeft / totalPages * 100) + '%';
+    const parts = [p.left, p.right].filter(Boolean).map(toThai);
+    label = `หน้า ${parts.join(' – ')} / ${toThai(totalPages)}`;
+    pct = currentSpread / (totalSpreads - 1) * 100;
   }
+  document.getElementById('page-info').textContent = label;
+  document.getElementById('prog').style.width = pct.toFixed(1) + '%';
 }
 
-/* ══════════════════════════════════════════
-   KEYBOARD
-══════════════════════════════════════════ */
+/* ══════ INPUT ══════ */
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextPage();
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevPage();
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') flip('next');
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   flip('prev');
 });
 
-/* ══════════════════════════════════════════
-   MOUSE/TOUCH DRAG
-══════════════════════════════════════════ */
-let dragStartX = null;
+let dx0 = null;
 const bookEl = document.getElementById('book');
-
-bookEl.addEventListener('mousedown',  e => { dragStartX = e.clientX; });
-window.addEventListener('mouseup', e => {
-  if (dragStartX === null) return;
-  const diff = dragStartX - e.clientX;
-  if (Math.abs(diff) > 80) { diff > 0 ? nextPage() : prevPage(); }
-  dragStartX = null;
+bookEl.addEventListener('mousedown',  e => { dx0 = e.clientX; });
+window.addEventListener('mouseup',    e => {
+  if (dx0 === null) return;
+  const d = dx0 - e.clientX; dx0 = null;
+  if (Math.abs(d) > 65) d > 0 ? flip('next') : flip('prev');
 });
-bookEl.addEventListener('touchstart', e => { dragStartX = e.touches[0].clientX; }, { passive: true });
-window.addEventListener('touchend', e => {
-  if (dragStartX === null) return;
-  const diff = dragStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 60) { diff > 0 ? nextPage() : prevPage(); }
-  dragStartX = null;
+bookEl.addEventListener('touchstart', e => { dx0 = e.touches[0].clientX; }, { passive:true });
+window.addEventListener('touchend',   e => {
+  if (dx0 === null) return;
+  const d = dx0 - e.changedTouches[0].clientX; dx0 = null;
+  if (Math.abs(d) > 50) d > 0 ? flip('next') : flip('prev');
 });
-
-/* ══════════════════════════════════════════
-   CLICK ZONES
-══════════════════════════════════════════ */
 bookEl.addEventListener('click', e => {
-  if (isFlipping) return;
-  const rect = bookEl.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  if (x > rect.width * 0.72) nextPage();
-  else if (x < rect.width * 0.28) prevPage();
+  if (flipping) return;
+  const r = bookEl.getBoundingClientRect(), x = e.clientX - r.left;
+  if (x > r.width * 0.72) flip('next');
+  else if (x < r.width * 0.28) flip('prev');
 });
 
-/* ══════════════════════════════════════════
-   BOOK TILT ON MOUSE MOVE
-══════════════════════════════════════════ */
+/* gentle tilt */
 document.addEventListener('mousemove', e => {
-  if (isFlipping) return;
-  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
-  const dx = (e.clientX - cx) / cx;
-  const dy = (e.clientY - cy) / cy;
-  bookEl.style.transform = `rotateX(${4 - dy * 3}deg) rotateY(${dx * 4}deg)`;
+  if (flipping) return;
+  const rx = ((e.clientY - window.innerHeight/2) / window.innerHeight) * -3 + 3;
+  const ry = ((e.clientX - window.innerWidth /2) / window.innerWidth ) *  4;
+  bookEl.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
 });
-document.addEventListener('mouseleave', () => {
-  bookEl.style.transform = 'rotateX(4deg)';
-});
+document.addEventListener('mouseleave', () => { bookEl.style.transform = 'rotateX(3deg)'; });
 
-/* ══════════════════════════════════════════
-   INIT
-══════════════════════════════════════════ */
-showSpread('cover');
-initPDF();
+document.getElementById('btn-prev').addEventListener('click', () => flip('prev'));
+document.getElementById('btn-next').addEventListener('click', () => flip('next'));
+
+/* ══════ INIT ══════ */
+async function init() {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  try {
+    pdfDoc = await pdfjsLib.getDocument(PDF_URL).promise;
+    totalPages   = pdfDoc.numPages;
+    totalSpreads = computeSpreads();
+
+    await drawPage(1, document.getElementById('c-cr'));
+    showSpread(0);
+    updateUI();
+  } catch(e) {
+    console.error(e);
+    document.querySelector('.loader-text').textContent = 'โหลด PDF ไม่สำเร็จ';
+  }
+
+  document.getElementById('loader').classList.add('done');
+}
+
+init();
 </script>
 </body>
 </html>
