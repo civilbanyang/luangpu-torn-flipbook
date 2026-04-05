@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การจัดงานนมัสการหลวงปู่ต้อน - Flipbook 3D</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        body { margin:0; background:linear-gradient(#d4b88a, #f5e8c7); display:flex; justify-content:center; align-items:center; min-height:100vh; overflow:hidden; }
+        .book { width:1100px; height:700px; perspective:3200px; box-shadow:0 40px 90px rgba(0,0,0,0.5); border-radius:20px; background:#fff; }
+        .scene { width:100%; height:100%; transform-style:preserve-3d; transition:transform 1.4s cubic-bezier(0.7,0,0.3,1); }
+        .page { position:absolute; width:50%; height:100%; background:#fffef7; box-shadow:15px 0 40px rgba(0,0,0,0.35); overflow:hidden; border:2px solid #8B4513; }
+        .left { left:0; border-radius:20px 0 0 20px; transform-origin:right center; }
+        .right { right:0; border-radius:0 20px 20px 0; transform-origin:left center; }
+        .active { z-index:10; }
+        iframe { width:100%; height:100%; border:none; }
+        .controls { position:absolute; bottom:-90px; left:50%; transform:translateX(-50%); display:flex; gap:25px; }
+        button { padding:16px 40px; font-size:19px; background:#8B4513; color:white; border:none; border-radius:12px; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body>
+
+<div class="book">
+    <div class="scene" id="scene">
+        <div class="page left active" id="leftPage"></div>
+        <div class="page right active" id="rightPage"></div>
+    </div>
+</div>
+
+<div class="controls">
+    <button onclick="prevPage()">◀ หน้าก่อนหน้า</button>
+    <button onclick="nextPage()">หน้าถัดไป ▶</button>
+</div>
+
+<script>
+    const pdfUrl = "https://raw.githubusercontent.com/USERNAME/REPO-NAME/main/การจัดงานนมัสการหลวงปู่ต้อน.pdf";
+    // ← เปลี่ยน USERNAME และ REPO-NAME เป็นชื่อของคุณ
+
+    let pdfDoc = null;
+    let currentPage = 1;
+
+    pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+        pdfDoc = pdf;
+        renderPages(1);
+    });
+
+    function renderPages(num) {
+        const left = document.getElementById('leftPage');
+        const right = document.getElementById('rightPage');
+        left.innerHTML = `<iframe src="${pdfUrl}#page=${num}"></iframe>`;
+        right.innerHTML = `<iframe src="${pdfUrl}#page=${num+1}"></iframe>`;
+    }
+
+    function nextPage() {
+        if (currentPage < pdfDoc.numPages - 1) {
+            currentPage += 2;
+            renderPages(currentPage);
+            document.getElementById('scene').style.transform = 'rotateY(-20deg)';
+            setTimeout(() => document.getElementById('scene').style.transform = 'rotateY(0deg)', 700);
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage -= 2;
+            renderPages(currentPage);
+        }
+    }
+</script>
+
+</body>
+</html>
