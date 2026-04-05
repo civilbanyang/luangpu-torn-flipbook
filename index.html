@@ -6,24 +6,45 @@
     <title>การจัดงานนมัสการหลวงปู่ต้อน - Flipbook 3D</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
-        body { margin:0; background:linear-gradient(#d4b88a, #f5e8c7); display:flex; justify-content:center; align-items:center; min-height:100vh; overflow:hidden; }
-        .book { width:1100px; height:700px; perspective:3200px; box-shadow:0 40px 90px rgba(0,0,0,0.5); border-radius:20px; background:#fff; }
-        .scene { width:100%; height:100%; transform-style:preserve-3d; transition:transform 1.4s cubic-bezier(0.7,0,0.3,1); }
-        .page { position:absolute; width:50%; height:100%; background:#fffef7; box-shadow:15px 0 40px rgba(0,0,0,0.35); overflow:hidden; border:2px solid #8B4513; }
-        .left { left:0; border-radius:20px 0 0 20px; transform-origin:right center; }
-        .right { right:0; border-radius:0 20px 20px 0; transform-origin:left center; }
-        .active { z-index:10; }
+        body { margin:0; background:linear-gradient(#5c4033, #d4b88a); display:flex; justify-content:center; align-items:center; min-height:100vh; overflow:hidden; }
+        .book { width:1150px; height:720px; perspective:3500px; box-shadow:0 50px 100px rgba(0,0,0,0.6); border-radius:25px; }
+        .scene { width:100%; height:100%; transform-style:preserve-3d; transition:transform 0.75s cubic-bezier(0.7,0,0.3,1); }
+        .page { position:absolute; width:50%; height:100%; background:#fffef7; box-shadow:15px 0 45px rgba(0,0,0,0.4); overflow:hidden; border:3px solid #5c4033; }
+        .left { left:0; border-radius:25px 0 0 25px; transform-origin:right center; }
+        .right { right:0; border-radius:0 25px 25px 0; transform-origin:left center; }
+        .cover { background:linear-gradient(135deg, #8B4513, #c47c4d); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; font-weight:bold; text-shadow:0 4px 12px rgba(0,0,0,0.6); }
         iframe { width:100%; height:100%; border:none; }
-        .controls { position:absolute; bottom:-90px; left:50%; transform:translateX(-50%); display:flex; gap:25px; }
-        button { padding:16px 40px; font-size:19px; background:#8B4513; color:white; border:none; border-radius:12px; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.3); }
+        .controls { position:absolute; bottom:-85px; left:50%; transform:translateX(-50%); display:flex; gap:25px; z-index:100; }
+        button { padding:16px 42px; font-size:19px; background:#5c4033; color:white; border:none; border-radius:12px; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.3); }
+        button:hover { background:#8B4513; }
     </style>
 </head>
 <body>
 
 <div class="book">
     <div class="scene" id="scene">
-        <div class="page left active" id="leftPage"></div>
-        <div class="page right active" id="rightPage"></div>
+
+        <!-- ปกหน้า -->
+        <div class="page left active cover" id="coverFront">
+            <h1 style="font-size:42px;margin:0;">การจัดงานนมัสการ</h1>
+            <h2 style="font-size:32px;margin:10px 0 40px 0;">หลวงปู่ต้อน</h2>
+            <p style="font-size:24px;">(พระครูพิพัฒน์ศีลคุณ)</p>
+            <p style="margin-top:80px;font-size:22px;">บ้านเมืองเก่า ต.บ้านยาง<br>อ.เกษตรสมบูรณ์ จ.ชัยภูมิ</p>
+        </div>
+
+        <!-- เนื้อหา PDF ซ้าย -->
+        <div class="page left" id="leftPage"></div>
+
+        <!-- เนื้อหา PDF ขวา -->
+        <div class="page right" id="rightPage"></div>
+
+        <!-- ปกหลัง -->
+        <div class="page right cover" id="coverBack">
+            <h2 style="font-size:28px;">จบ</h2>
+            <p style="margin-top:120px;font-size:22px;">ขอบพระคุณทุกท่าน<br>ที่ร่วมอนุรักษ์บุญบารมีหลวงปู่ต้อน</p>
+            <p style="position:absolute;bottom:60px;font-size:18px;">บ้านเมืองเก่า • ชัยภูมิ</p>
+        </div>
+
     </div>
 </div>
 
@@ -33,8 +54,7 @@
 </div>
 
 <script>
-    const pdfUrl = "https://raw.githubusercontent.com/USERNAME/REPO-NAME/main/การจัดงานนมัสการหลวงปู่ต้อน.pdf";
-    // ← เปลี่ยน USERNAME และ REPO-NAME เป็นชื่อของคุณ
+    const pdfUrl = "https://raw.githubusercontent.com/civilbanyang/luangpu-torn-flipbook/main/การจัดงานนมัสการหลวงปู่ต้อน.pdf";
 
     let pdfDoc = null;
     let currentPage = 1;
@@ -45,18 +65,16 @@
     });
 
     function renderPages(num) {
-        const left = document.getElementById('leftPage');
-        const right = document.getElementById('rightPage');
-        left.innerHTML = `<iframe src="${pdfUrl}#page=${num}"></iframe>`;
-        right.innerHTML = `<iframe src="${pdfUrl}#page=${num+1}"></iframe>`;
+        document.getElementById('leftPage').innerHTML = `<iframe src="${pdfUrl}#page=${num}"></iframe>`;
+        document.getElementById('rightPage').innerHTML = `<iframe src="${pdfUrl}#page=${num+1}"></iframe>`;
     }
 
     function nextPage() {
         if (currentPage < pdfDoc.numPages - 1) {
             currentPage += 2;
             renderPages(currentPage);
-            document.getElementById('scene').style.transform = 'rotateY(-20deg)';
-            setTimeout(() => document.getElementById('scene').style.transform = 'rotateY(0deg)', 700);
+            document.getElementById('scene').style.transform = 'rotateY(-18deg)';
+            setTimeout(() => document.getElementById('scene').style.transform = 'rotateY(0deg)', 650);
         }
     }
 
