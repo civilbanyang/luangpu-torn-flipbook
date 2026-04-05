@@ -7,43 +7,42 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         body { margin:0; background:linear-gradient(#5c4033, #d4b88a); display:flex; justify-content:center; align-items:center; min-height:100vh; overflow:hidden; }
-        .book { width:1150px; height:720px; perspective:3500px; box-shadow:0 50px 100px rgba(0,0,0,0.6); border-radius:25px; position:relative; }
-        .scene { width:100%; height:100%; transform-style:preserve-3d; transition:transform 0.75s cubic-bezier(0.7,0,0.3,1); }
-        .page { position:absolute; width:50%; height:100%; background:#fffef7; box-shadow:15px 0 45px rgba(0,0,0,0.4); overflow:hidden; border:3px solid #5c4033; }
-        .left { left:0; border-radius:25px 0 0 25px; transform-origin:right center; }
-        .right { right:0; border-radius:0 25px 25px 0; transform-origin:left center; }
-        .cover { background:linear-gradient(135deg, #8B4513, #c47c4d); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; text-shadow:0 4px 12px rgba(0,0,0,0.6); font-weight:bold; }
+        .book { width:1180px; height:740px; perspective:3800px; box-shadow:0 50px 120px rgba(0,0,0,0.6); border-radius:30px; position:relative; }
+        .scene { width:100%; height:100%; transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(0.65,0,0.35,1); }
+        .page { position:absolute; width:50%; height:100%; background:#fffef7; box-shadow:20px 0 50px rgba(0,0,0,0.45); overflow:hidden; border:4px solid #5c4033; }
+        .left { left:0; border-radius:30px 0 0 30px; transform-origin:right center; }
+        .right { right:0; border-radius:0 30px 30px 0; transform-origin:left center; }
+        .cover { background:linear-gradient(135deg, #8B4513, #c47c4d); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; text-shadow:0 5px 15px rgba(0,0,0,0.7); font-weight:bold; }
         canvas { width:100%; height:100%; border:none; }
-        .controls { position:absolute; bottom:-85px; left:50%; transform:translateX(-50%); display:flex; gap:25px; z-index:100; }
-        button { padding:16px 42px; font-size:19px; background:#5c4033; color:white; border:none; border-radius:12px; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.3); }
+        .controls { position:absolute; bottom:-90px; left:50%; transform:translateX(-50%); display:flex; gap:30px; z-index:100; }
+        button { padding:16px 45px; font-size:20px; background:#5c4033; color:white; border:none; border-radius:15px; cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
         button:hover { background:#8B4513; }
+        .page-number { position:absolute; bottom:25px; font-size:16px; color:#555; width:100%; text-align:center; }
     </style>
 </head>
 <body>
 
 <div class="book">
     <div class="scene" id="scene">
-
         <!-- ปกหน้า -->
         <div class="page left active cover" id="coverFront">
-            <h1 style="font-size:42px;margin:0;">การจัดงานนมัสการ</h1>
-            <h2 style="font-size:32px;margin:10px 0 40px 0;">หลวงปู่ต้อน</h2>
-            <p style="font-size:24px;">(พระครูพิพัฒน์ศีลคุณ)</p>
-            <p style="margin-top:80px;font-size:22px;">บ้านเมืองเก่า ต.บ้านยาง<br>อ.เกษตรสมบูรณ์ จ.ชัยภูมิ</p>
+            <h1 style="font-size:46px;margin:0;">การจัดงานนมัสการ</h1>
+            <h2 style="font-size:34px;margin:15px 0 50px 0;">หลวงปู่ต้อน</h2>
+            <p style="font-size:26px;">(พระครูพิพัฒน์ศีลคุณ)</p>
+            <p style="margin-top:90px;font-size:24px;">บ้านเมืองเก่า ต.บ้านยาง<br>อ.เกษตรสมบูรณ์ จ.ชัยภูมิ</p>
         </div>
 
         <!-- หน้า PDF ซ้าย -->
-        <div class="page left" id="leftPage"><canvas id="canvasLeft"></canvas></div>
+        <div class="page left" id="leftPage"><canvas id="canvasLeft"></canvas><div class="page-number" id="numLeft"></div></div>
         <!-- หน้า PDF ขวา -->
-        <div class="page right" id="rightPage"><canvas id="canvasRight"></canvas></div>
+        <div class="page right" id="rightPage"><canvas id="canvasRight"></canvas><div class="page-number" id="numRight"></div></div>
 
         <!-- ปกหลัง -->
         <div class="page right cover" id="coverBack">
-            <h2 style="font-size:28px;">จบ</h2>
-            <p style="margin-top:120px;font-size:22px;">ขอบพระคุณทุกท่าน<br>ที่ร่วมอนุรักษ์บุญบารมีหลวงปู่ต้อน</p>
-            <p style="position:absolute;bottom:60px;font-size:18px;">บ้านเมืองเก่า • ชัยภูมิ</p>
+            <h2 style="font-size:32px;">จบ</h2>
+            <p style="margin-top:140px;font-size:24px;">ขอบพระคุณทุกท่าน<br>ที่ร่วมอนุรักษ์บุญบารมีหลวงปู่ต้อน</p>
+            <p style="position:absolute;bottom:70px;font-size:20px;">บ้านเมืองเก่า • ชัยภูมิ</p>
         </div>
-
     </div>
 </div>
 
@@ -54,7 +53,6 @@
 
 <script>
     const pdfUrl = "https://raw.githubusercontent.com/civilbanyang/luangpu-torn-flipbook/main/การจัดงานนมัสการหลวงปู่ต้อน.pdf";
-
     let pdfDoc = null;
     let currentPage = 1;
 
@@ -64,31 +62,34 @@
     });
 
     async function renderPages(num) {
-        const canvasLeft = document.getElementById('canvasLeft');
-        const canvasRight = document.getElementById('canvasRight');
+        const leftCanvas = document.getElementById('canvasLeft');
+        const rightCanvas = document.getElementById('canvasRight');
 
         const page1 = await pdfDoc.getPage(num);
-        const page2 = await pdfDoc.getPage(num + 1);
+        const page2 = await pdfDoc.getPage(Math.min(num + 1, pdfDoc.numPages));
 
-        const scale = 1.8;
+        const scale = 2.2;   // ← ปรับให้อ่านสบายตา (ยิ่งมากยิ่งชัด)
         const viewport1 = page1.getViewport({ scale });
         const viewport2 = page2.getViewport({ scale });
 
-        canvasLeft.height = viewport1.height;
-        canvasLeft.width = viewport1.width;
-        canvasRight.height = viewport2.height;
-        canvasRight.width = viewport2.width;
+        leftCanvas.height = viewport1.height;
+        leftCanvas.width = viewport1.width;
+        rightCanvas.height = viewport2.height;
+        rightCanvas.width = viewport2.width;
 
-        await page1.render({ canvasContext: canvasLeft.getContext('2d'), viewport: viewport1 }).promise;
-        await page2.render({ canvasContext: canvasRight.getContext('2d'), viewport: viewport2 }).promise;
+        await page1.render({ canvasContext: leftCanvas.getContext('2d'), viewport: viewport1 }).promise;
+        await page2.render({ canvasContext: rightCanvas.getContext('2d'), viewport: viewport2 }).promise;
+
+        document.getElementById('numLeft').textContent = `หน้า ${num}`;
+        document.getElementById('numRight').textContent = `หน้า ${num+1}`;
     }
 
     function nextPage() {
         if (currentPage < pdfDoc.numPages - 1) {
             currentPage += 2;
             renderPages(currentPage);
-            document.getElementById('scene').style.transform = 'rotateY(-18deg)';
-            setTimeout(() => { document.getElementById('scene').style.transform = 'rotateY(0deg)'; }, 650);
+            document.getElementById('scene').style.transform = 'rotateY(-20deg)';
+            setTimeout(() => document.getElementById('scene').style.transform = 'rotateY(0deg)', 600);
         }
     }
 
@@ -98,6 +99,32 @@
             renderPages(currentPage);
         }
     }
+
+    // ลากเมาส์เพื่อพลิกหน้า (Drag to flip)
+    let isDragging = false;
+    let startX = 0;
+    const book = document.querySelector('.book');
+
+    book.addEventListener('mousedown', e => {
+        isDragging = true;
+        startX = e.clientX;
+    });
+
+    window.addEventListener('mouseup', e => {
+        if (!isDragging) return;
+        isDragging = false;
+        const diff = startX - e.clientX;
+        if (diff > 120) nextPage();
+        else if (diff < -120) prevPage();
+    });
+
+    // คลิกขอบขวา / ซ้าย เพื่อพลิกหน้า
+    book.addEventListener('click', e => {
+        const rect = book.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        if (clickX > rect.width * 0.7) nextPage();
+        else if (clickX < rect.width * 0.3) prevPage();
+    });
 </script>
 
 </body>
